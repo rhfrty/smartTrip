@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public Map m_map;
     public Image p_marker_img = new Image();
     public ArrayAdapter<String> adapter;
-    AlertDialog.Builder ad;
+    AlertDialog.Builder ad, adOk;
     private RouteManager rm = new RouteManager();
     private  RoutePlan routePlan = new RoutePlan();
     private RouteOptions routeOptions = new RouteOptions();
@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
         routeOptions.setRouteType(RouteOptions.Type.FASTEST);
         routePlan.setRouteOptions(routeOptions);
         ad = new AlertDialog.Builder(this);
+        adOk = new AlertDialog.Builder(this);
+        adOk.setTitle("Заявка сформирована");
         ad.setTitle("Внимание");
         ad.setPositiveButton("Позвонить", new DialogInterface.OnClickListener() {
             @Override
@@ -121,12 +123,13 @@ public class MainActivity extends AppCompatActivity {
         ad.setNegativeButton("Заявка", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                err.setText("Заявка №Y2384");
+                adOk.setMessage("№Y2384");
+                adOk.show();
                 dialog.dismiss();
             }
         });
         ad.setCancelable(true);
-
+        adOk.setCancelable(true);
 
         /* Here Карта */
         mapFragment.init(new OnEngineInitListener() {

@@ -37,23 +37,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/btn_och"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".50"
-                android:text="Запросить данные" />
-
-
-
-        </LinearLayout>
-
 
 
         <LinearLayout
@@ -74,6 +57,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight=".80" />
+
+            <Button
+                android:id="@+id/btn_och"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".20"
+                android:text="Опрос" />
 
         </LinearLayout>
     </LinearLayout>
