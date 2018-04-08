@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import com.here.android.mpa.mapping.Map;
 import com.here.android.mpa.mapping.MapFragment;
@@ -55,6 +56,11 @@ import com.here.android.mpa.mapping.MapMarker;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.OnEngineInitListener;
 import com.here.android.mpa.common.Image;
+import com.here.android.mpa.mapping.MapRoute;
+import com.here.android.mpa.routing.RouteManager;
+import com.here.android.mpa.routing.RouteOptions;
+import com.here.android.mpa.routing.RoutePlan;
+import com.here.android.mpa.routing.RouteResult;
 import com.here.android.mpa.search.Category;
 import com.here.android.mpa.search.CategoryFilter;
 
@@ -83,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
     public Image p_marker_img = new Image();
     public ArrayAdapter<String> adapter;
     AlertDialog.Builder ad;
+    private RouteManager rm = new RouteManager();
+    private  RoutePlan routePlan = new RoutePlan();
+    private RouteOptions routeOptions = new RouteOptions();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
         spinnerPetrol = (Spinner)findViewById(R.id.spinnerPetrol);
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapfragment);
+        routeOptions.setTransportMode(RouteOptions.TransportMode.CAR);
+        routeOptions.setRouteType(RouteOptions.Type.FASTEST);
+        routePlan.setRouteOptions(routeOptions);
         ad = new AlertDialog.Builder(this);
         ad.setTitle("Внимание");
         ad.setPositiveButton("Позвонить", new DialogInterface.OnClickListener() {
@@ -311,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                 new ParseTask().execute();
             }
             main_text.setText(" => " + count_petrol);
-            if (count_petrol > 0 && count_petrol <= 2) {
+            if (count_petrol > 0 && count_petrol <= 4) {
                 soudPlay("petrol");
                 err.setText(rad.toString());
                 try {
@@ -319,12 +331,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
                 for (int k = 0; k < count_petrol; k++) {
                     p_map_marker.add(new MapMarker(new GeoCoordinate(petrol_x.get(k), petrol_y.get(k)), p_marker_img));
                     m_map.addMapObject(p_map_marker.get(k));
                 }
+                routePlan.addWaypoint(new GeoCoordinate(gpsX, gpsY));
+                routePlan.addWaypoint(new GeoCoordinate(petrol_x.get(0), petrol_y.get(0)));
+                rm.calculateRoute(routePlan, new RouteListener());
             }
         }
 
@@ -424,6 +437,26 @@ public class MainActivity extends AppCompatActivity {
             mp = MediaPlayer.create(this, R.raw.ok);
         }
         mp.start();
+    }
+
+    private class RouteListener implements RouteManager.Listener {
+
+        // Method defined in Listener
+        public void onProgress(int percentage) {
+            // Display a message indicating calculation progress
+        }
+
+        // Method defined in Listener
+        public void onCalculateRouteFinished(RouteManager.Error error, List<RouteResult> routeResult) {
+            // If the route was calculated successfully
+            if (error == RouteManager.Error.NONE) {
+                // Render the route on the map
+                MapRoute mapRoute = new MapRoute(routeResult.get(0).getRoute());
+                m_map.addMapObject(mapRoute);
+            } else {
+                // Display a message indicating route calculation failure
+            }
+        }
     }
 
 
