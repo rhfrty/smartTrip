@@ -1,11 +1,9 @@
 package ru.mts.trip.smart.smarttrip;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -37,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,7 +43,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 import com.here.android.mpa.mapping.Map;
@@ -61,29 +56,22 @@ import com.here.android.mpa.routing.RouteManager;
 import com.here.android.mpa.routing.RouteOptions;
 import com.here.android.mpa.routing.RoutePlan;
 import com.here.android.mpa.routing.RouteResult;
-import com.here.android.mpa.search.Category;
-import com.here.android.mpa.search.CategoryFilter;
-
-import junit.framework.Test;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView main_text, gps_text, err;
-    Button btn_och, btn_find;
+    Button btn_och;
     public Spinner spinnerPetrol;
-    public static String LOG_TAG = "my_log";
-    public boolean flagBluethooth, mapFlag = false;
     ArrayList <String> petrol_station = new ArrayList<>();
     ArrayList <Integer> petrol_destantion = new ArrayList<>();
     ArrayList <Double> petrol_x = new ArrayList<>();
     ArrayList <Double> petrol_y = new ArrayList<>();
-    public String nextJson = null;
+    ArrayList <MapMarker> p_map_marker = new ArrayList<>();
     public Integer count_petrol, rad, errCode;
-    public String gpsLatitude, gpsLongitude;
+    public String gpsLatitude, gpsLongitude, nextJson;
     public double gpsX, gpsY;
     public String resUrl = "";
     private MapMarker m_map_marker;
-    ArrayList <MapMarker> p_map_marker = new ArrayList<>();
     BluetoothSocket clientSocket;
     public Map m_map;
     public Image p_marker_img = new Image();
@@ -159,9 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 byte[] buffer = new byte[16];
                 try{
                     BluetoothDevice device = bluetooth.getRemoteDevice("98:D3:32:20:85:31");
-
-                    Method m = device.getClass().getMethod(
-                            "createRfcommSocket", new Class[] {int.class});
+                    Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
 
                     clientSocket = (BluetoothSocket) m.invoke(device, 1);
                     clientSocket.connect();
@@ -207,11 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 createMapMarker(m_map);
             }
-
-
         };
-
-
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             gps_text.setText("Нет прав");
@@ -236,21 +218,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         btn_och.setOnClickListener(ocl_btn_och);
-
-
     }
 
-
     private class ParseTask extends AsyncTask<Void, Void, String>   {
-
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String resultJson = "";
 
-
         @Override
         protected String doInBackground(Void... params)  {
-            // получаем данные с внешнего ресурса
             try {
                 if (nextJson != null) {
                     resUrl = nextJson;
@@ -343,7 +319,6 @@ public class MainActivity extends AppCompatActivity {
                 rm.calculateRoute(routePlan, new RouteListener());
             }
         }
-
     }
 
     public void jsonAct() {
@@ -373,7 +348,6 @@ public class MainActivity extends AppCompatActivity {
         spinnerPetrol.setOnItemSelectedListener(itemSelectedListener);
     }
 
-
     private LocationListener MainActivity = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
@@ -399,26 +373,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
-    //bluethooth
-    public void BluethoothTest()
-    {
-        BluetoothAdapter bluetoothAd = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAd.isEnabled()) {
-        }
-        else
-        {
-            if (flagBluethooth == false) {
-                // Bluetooth выключен. Предложим пользователю включить его.
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, 1);
-                flagBluethooth = true;
-            }
-        }
-    }
-
-
     private void createMapMarker(Map m_map) {
         Image marker_img = new Image();
         try {
@@ -428,9 +382,7 @@ public class MainActivity extends AppCompatActivity {
         }
         m_map_marker = new MapMarker(m_map.getCenter(), marker_img);
         m_map.addMapObject(m_map_marker);
-
     }
-
 
     private void soudPlay(String send) {
         MediaPlayer mp;
@@ -444,24 +396,15 @@ public class MainActivity extends AppCompatActivity {
 
     private class RouteListener implements RouteManager.Listener {
 
-        // Method defined in Listener
         public void onProgress(int percentage) {
-            // Display a message indicating calculation progress
         }
 
-        // Method defined in Listener
         public void onCalculateRouteFinished(RouteManager.Error error, List<RouteResult> routeResult) {
-            // If the route was calculated successfully
             if (error == RouteManager.Error.NONE) {
-                // Render the route on the map
                 MapRoute mapRoute = new MapRoute(routeResult.get(0).getRoute());
                 m_map.addMapObject(mapRoute);
             } else {
-                // Display a message indicating route calculation failure
             }
         }
     }
-
-
 }
-
