@@ -16,56 +16,41 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/main_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="textLog"
-                android:layout_weight=".20"
-                android:textColor="#ff0000" />
+                android:layout_weight=".25"
+                android:text="textLog" />
 
             <TextView
                 android:id="@+id/gps_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight=".35"
                 android:text="Идет получение координат"
-                android:layout_weight=".80"
-                android:textColor="#ff0000" />
-
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/err"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".20"
-                android:text="Количество" />
+                android:textSize="8sp"
+                android:textStyle="bold" />
 
             <Spinner
                 android:id="@+id/spinnerPetrol"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".80" />
+                android:layout_height="match_parent"
+                android:layout_weight=".10" />
 
-            <Button
-                android:id="@+id/btn_och"
+            <TextView
+                android:id="@+id/err"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".20"
-                android:text="Опрос" />
+                android:layout_height="match_parent"
+                android:layout_weight=".30"
+                android:text="Количество" />
+
 
         </LinearLayout>
+
     </LinearLayout>
 
     <RelativeLayout
@@ -78,9 +63,16 @@
             class="com.here.android.mpa.mapping.MapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true" />
+
+        <Button
+            android:id="@+id/btn_och"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignRight="@id/mapfragment"
+            android:layout_weight=".10"
+            android:background="@drawable/cached"/>
     </RelativeLayout>
 
 </LinearLayout>
